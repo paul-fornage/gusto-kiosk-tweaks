@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Gusto Kiosk Tweaks",
+  "version": "1.0",
+  "description": "Keyboard shortcuts for Gusto Kiosk",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://kiosk.gusto.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://kiosk.gusto.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "action": {
+    "default_title": "Gusto Kiosk Tweaks Settings",
+    "default_popup": "options.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gusto-kiosk-tweaks@example.com"
+    }
+  }
+}

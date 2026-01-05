@@ -1,0 +1,22 @@
+{
+  "name": "gusto-kiosk-tweaks",
+  "version": "1.0.0",
+  "description": "Keyboard shortcuts for Gusto Kiosk",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["browser-extension", "gusto", "kiosk"],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.25.0",
+  "devDependencies": {
+    "@types/chrome": "^0.1.32",
+    "esbuild": "^0.27.2",
+    "esbuild-plugin-copy": "^2.1.1",
+    "typescript": "^5.9.3"
+  }
+}
