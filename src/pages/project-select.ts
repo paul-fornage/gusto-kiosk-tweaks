@@ -11,6 +11,71 @@ const SELECTORS = {
 } as const;
 
 /**
+ * Enum for the various states of the default button
+ */
+enum SaveButtonState {
+  SetDefault = 'SET_DEFAULT',
+  CurrentDefault = 'CURRENT_DEFAULT',
+  Success = 'SUCCESS',
+  Loading = 'LOADING',
+  FailToSave = 'FAILED_TO_SAVE'
+}
+
+/**
+ * Centralized configuration for button text and styles based on state
+ */
+const BUTTON_STATE_CONFIG = {
+  [SaveButtonState.SetDefault]: {
+    text: 'Set as default',
+    disabled: false,
+    html_class: 'normal-button'
+  },
+  [SaveButtonState.CurrentDefault]: {
+    text: 'Current default',
+    disabled: true,
+    html_class: 'disabled-button'
+  },
+  [SaveButtonState.Success]: {
+    text: 'Default saved!',
+    disabled: true, // Prevent clicking while showing success
+    html_class: 'success-button'
+  },
+  [SaveButtonState.Loading]: {
+    text: 'Loading...',
+    disabled: true,
+    html_class: 'disabled-button'
+  },
+  [SaveButtonState.FailToSave]: {
+    text: 'Failed to save',
+    disabled: false, // Allow retry
+    html_class: 'error-button'
+  },
+
+} as const;
+
+/**
+ * Static styles for the button structure
+ */
+const BUTTON_STATIC_STYLES: Partial<CSSStyleDeclaration> = {
+  width: '80%',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginTop: '1rem',
+  marginBottom: '1rem',
+  display: 'block',
+  alignSelf: 'center'
+};
+
+
+function applyButtonState(button: HTMLButtonElement, state: SaveButtonState): void {
+  const config = BUTTON_STATE_CONFIG[state];
+  button.textContent = config.text;
+  button.disabled = config.disabled;
+  button.className = config.html_class;
+}
+
+
+/**
  * Gets the text content of the selected option
  */
 function getSelectedProjectName(selectElement: HTMLSelectElement): string {
@@ -53,45 +118,49 @@ function addDefaultButton(selectElement: HTMLSelectElement): void {
   if ((selectElement.dataset.gustoDefaultButtonAdded as string | undefined)) return;
 
   const button = document.createElement('button');
-  button.type = 'button';
-  button.className = DEFAULT_BUTTON_CLASS;
-  button.textContent = 'Set as default';
-  button.style.width = '80%';
-  button.style.marginLeft = 'auto';
-  button.style.marginRight = 'auto';
-  button.style.marginTop = '1rem';
-  button.style.marginBottom = '1rem';
-  button.style.display = 'block';
-  button.style.alignSelf = 'center';
+  Object.assign(button.style, BUTTON_STATIC_STYLES);
+  applyButtonState(button, SaveButtonState.Loading);
 
 
   const updateButtonState = () => {
-    const projectName = getSelectedProjectName(selectElement);
+    const selectedProjectName = getSelectedProjectName(selectElement);
+    let storedDefaultProjectName: string | undefined = undefined;
 
-    chrome.storage.local.get([STORAGE_KEY_PROJECT], (result) => {
-      const defaultProject = result[STORAGE_KEY_PROJECT] as string | undefined;
+    chrome.storage.local.get([STORAGE_KEY_PROJECT]).then((result) => {
+      storedDefaultProjectName = result[STORAGE_KEY_PROJECT] as string | undefined;
+    }).catch((e) => {
+      console.error('Failed to load default project from storage:', e);
+    })
 
-      if (projectName && defaultProject && projectName === defaultProject) {
-        button.textContent = 'Current default';
-        button.disabled = true;
-      } else {
-        button.textContent = 'Set as default';
-        button.disabled = false;
-      }
-    });
+    const isDefaultSelected: boolean = selectedProjectName === storedDefaultProjectName;
+    if (selectedProjectName && storedDefaultProjectName && isDefaultSelected) {
+      applyButtonState(button, SaveButtonState.CurrentDefault);
+    } else {
+      applyButtonState(button, SaveButtonState.SetDefault);
+    }
   };
 
   selectElement.addEventListener('change', updateButtonState);
 
-  button.addEventListener('click', () => {
+  const buttonClickHandler = (()=> {
     const projectName = getSelectedProjectName(selectElement);
     if (projectName) {
-      chrome.storage.local.set({ [STORAGE_KEY_PROJECT]: projectName });
-      button.textContent = 'Default saved!';
-      setTimeout(() => {
-        button.textContent = 'Set as default';
-      }, 2000);
+      chrome.storage.local.set({ [STORAGE_KEY_PROJECT]: projectName }).then(() => {
+        applyButtonState(button, SaveButtonState.Success);
+      }).catch((e) => {
+        console.error('Failed to save default project to storage:', e);
+        applyButtonState(button, SaveButtonState.FailToSave);
+      }).finally(() => {
+        setTimeout(() => {
+          // TODO This should be re-checked, not back to default
+          applyButtonState(button, SaveButtonState.SetDefault);
+        }, 2000);
+      });
     }
+  })
+
+  button.addEventListener('click', () => {
+    buttonClickHandler();
   });
 
   const outer_container = selectElement.parentElement?.parentElement;
