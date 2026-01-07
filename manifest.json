@@ -2,7 +2,14 @@
   "manifest_version": 3,
   "name": "Gusto Kiosk Tweaks",
   "version": "1.0",
+  "author": "Paul Fornage",
+  "homepage_url": "https://github.com/paul-fornage/gusto-kiosk-tweaks",
   "description": "Keyboard shortcuts for Gusto Kiosk",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "permissions": ["storage"],
   "host_permissions": [
     "https://kiosk.gusto.com/*"
@@ -19,7 +26,12 @@
   },
   "action": {
     "default_title": "Gusto Kiosk Tweaks Settings",
-    "default_popup": "options.html"
+    "default_popup": "options.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   },
   "background": {
     "service_worker": "background.js",
@@ -27,7 +39,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "gusto-kiosk-tweaks@example.com"
+      "id": "gusto-tweaks.paul.fornage.org"
     }
   }
 }

@@ -9,12 +9,18 @@
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["browser-extension", "gusto", "kiosk"],
+  "keywords": [
+    "browser-extension",
+    "gusto",
+    "kiosk"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.25.0",
   "devDependencies": {
+    "@types/archiver": "^7.0.0",
     "@types/chrome": "^0.1.32",
+    "archiver": "^7.0.1",
     "esbuild": "^0.27.2",
     "esbuild-plugin-copy": "^2.1.1",
     "typescript": "^5.9.3"

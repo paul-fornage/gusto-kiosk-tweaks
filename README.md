@@ -10,6 +10,9 @@ out the defaults.
 ### Build
 `pnpm i && pnpm build`
 
+Some shenanigans here. Since there are 2 targets, manifest.json is slightly tweaked in each version. 
+Just keep in mind the build process changes manifest for each browser.
+
 ### Developed with firefox 
 Unfortunately, due to their security through obscurity, and my silly brain, I can't move the kiosk to another browser 
 without asking the company to re-verify my kiosk, and then I would have to use chrome. 
