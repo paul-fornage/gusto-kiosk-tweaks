@@ -110,7 +110,7 @@ function applyDefaultProject(selectElement: HTMLSelectElement): void {
     }
   });
 }
-
+// TODO 'loading...' indefinitely when no default set
 /**
  * Adds a "Set as default" button next to the project selector
  */
