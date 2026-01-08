@@ -7,6 +7,9 @@ Who puts an on-screen keypad that you can't use a keyboard on??? And similar odd
 Generally the goal is you can set default values, and then press enter repeatedly to go through their pipeline filling
 out the defaults.
 
+## Soon to be unmaintined!
+due to changing work environments, I won't have the privilege of needed to use the gusto kiosk. 
+
 ### Build
 `pnpm i && pnpm build`
 
